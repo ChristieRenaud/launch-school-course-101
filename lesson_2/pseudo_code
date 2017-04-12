@@ -1,0 +1,80 @@
+1.
+Given two integers.
+
+Assign first integer to a variable.
+Assing second integer to another variable.
+Add the two variable together.
+Return that result.
+------
+START
+#Given two integers x and y
+x + y = answer
+PRINT answer
+
+END
+
+2. 
+Given an array of strings.
+
+Iterate over the array. Take first string, add to a variable. Take next string, add to variable. Repeat until no strings are left.
+Return the variable
+
+-----
+
+START
+
+# Given an array of strings called "strings".
+SET iterator = 1
+SET new_string = first string in array
+
+While iterator <= length of strings
+If new_string != strings
+  Add string to new_string
+  string = string + 1
+
+PRINT new_string
+
+END
+
+3.
+
+Given an array of integers.
+
+Create a new empty array. 
+Iterate over array.
+- Save the first value to the empty array
+-Skip the next iteration
+-Save the next value to the new array
+-Skip the next iteration
+-Repeat over whole collection
+Return the new array
+
+---
+
+START
+
+# Given an array of integers called "numbers"
+
+SET others = empty array
+SET iterator = 0
+
+While iterator < length of numbers
+iterator = iterator + 1
+If iterator.even?
+  skip to next iteration
+Else
+  add number to others
+
+PRINT others
+
+END
+
+
+
+
+
+
+
+
+PRINT
+
