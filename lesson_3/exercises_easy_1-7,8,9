@@ -1,0 +1,11 @@
+exercises_easy_1-7,8
+
+7. 42
+
+8. flintstones.flatten!
+
+9.
+flintstones = { "Fred" => 0, "Wilma" => 1, "Barney" => 2, "Betty" => 3, "BamBam" => 4, "Pebbles" => 5 }
+flintstones.to_a[2]
+
+flintstones.assoc("Barney")

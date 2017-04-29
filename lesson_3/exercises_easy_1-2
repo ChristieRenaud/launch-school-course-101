@@ -1,0 +1,12 @@
+Question 2
+
+! before something means the opposite. It can also signify that a method will mutate the caller if it is at the end of a method.
+? at the end of a method usually returns true or false. It could also be used in the ternary operator for if...else 
+
+1. != means does not equal and you'd use it in a conditional check
+2. It would mean not user_name, returns false if user_name exists and equals anything but false or nil.
+Returns true if user_name equals false or nil. Returns an error user_name doesn't exist.
+3. It means that the method mutates the object.
+4. I don't know.
+5. After a method it returns true or false.
+6. !! before something means two nots. Returns true if something is truthy and false if it is false. Turns an object into its boolean equivalent (true or false)
