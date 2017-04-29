@@ -15,8 +15,8 @@ def prompt(message)
 end
 
 def win?(first, second)
-  WINNING_COMBINATIONS.any? do |(key, value)|
-    first == key && value.include?(second)
+  WINNING_COMBINATIONS.any? do |winner, loser|
+    first == winner && loser.include?(second)
   end
 end
 
@@ -30,15 +30,22 @@ def display_results(player, computer)
   end
 end
 
+def clear_screen
+  sleep(1.5)
+  system('clear') || system('cls')
+end
+
 loop do
   player_score = 0
   computer_score = 0
+  clear_screen
   prompt("Welcome to The Rock, Paper, Scissors, Lizard, Spock Game.")
   prompt("First player to reach five points wins.")
 
   loop do
     choice = ''
     loop do
+      sleep(0.5)
       choice_prompt = <<-MSG
         Please enter:
             r for rock
@@ -51,11 +58,8 @@ loop do
       prompt(choice_prompt)
       choice = Kernel.gets().chomp().downcase()
 
-      if VALID_CHOICES.key?(choice)
-        break
-      else
-        prompt("That's not a valid choice")
-      end
+      break if VALID_CHOICES.key?(choice)
+      prompt("That's not a valid choice")
     end
 
     choice = VALID_CHOICES[choice]
@@ -68,8 +72,8 @@ loop do
     elsif win?(computer_choice, choice)
       computer_score += 1
     end
-
     display_results(choice, computer_choice)
+    clear_screen
 
     break if player_score == 5 || computer_score == 5
   end

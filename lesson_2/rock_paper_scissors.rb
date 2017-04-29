@@ -4,7 +4,7 @@ VALID_CHOICES = %w(rock paper scissors spock lizard)
 def prompt(message)
   Kernel.puts("=> #{message}")
 end
-
+# win? method doesn't work
 def win?(first, second)
   (first == 'rock' && second == ('scissors' || 'lizard')) ||
     (first == 'paper' && second == ('rock' || 'spock')) ||
