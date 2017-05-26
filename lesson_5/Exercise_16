@@ -1,0 +1,3 @@
+Exercise_16
+hexes = (0..9).to_a + ('a'..'f').to_a
+hexes = hexes.join
