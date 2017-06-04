@@ -12,11 +12,12 @@ def select_fruit(hsh)
   x = 0
 
   loop do
+    break if x == hsh.size
     if produce_values[x] == "Fruit"
       fruit_hash[produce_keys[x]] = produce_values[x]
     end
     x += 1
-    break if x == hsh.size
+    
   end
   fruit_hash
 end

@@ -6,13 +6,12 @@ def double_numbers(numbers)
     break if counter == numbers.size
 
     current_number = numbers[counter]
-    doubled_numbers << current_number * 2
+    numbers[counter] = current_number * 2
 
     counter += 1
   end
 
-  numbers = []
-  numbers = doubled_numbers
+  numbers
 end
 
 my_numbers = [1, 4, 3, 7, 2, 6]
