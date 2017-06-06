@@ -1,5 +1,3 @@
-require 'pry'
-
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
@@ -17,11 +15,11 @@ def joinor(array, punctuation=',', word ='or')
   joined_string = ''
   if array.size == 2
     return joined_string = array.first.to_s + ' ' + word + ' ' + array.last.to_s
-  end 
-  loop do 
+  end
+  loop do
     break if array.empty?
     num = array.shift
-    case array.size 
+    case array.size
     when 0
       joined_string += num.to_s
     when 1
@@ -29,11 +27,11 @@ def joinor(array, punctuation=',', word ='or')
     else
       joined_string += (num.to_s + punctuation + ' ')
     end
-  end  
+  end
   joined_string
 end
 
-# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/AbcSize, Metrics/MethodLength
 def display_board(brd)
   system 'clear'
   puts "You're a #{PLAYER_MARKER}. Computer is a #{COMPUTER_MARKER}."
@@ -52,7 +50,7 @@ def display_board(brd)
   puts "     |     |"
   puts ""
 end
-# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
 def initialize_board
   new_board = {}
@@ -85,29 +83,11 @@ end
 
 def find_at_risk_square(line, board, player)
   if board.values_at(*line).count(player) == 2
-    board.select{ |k,v| line.include?(k) && v == INITIAL_MARKER}.keys.first
+    board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
   else
     nil
   end
 end
-
-# def start_game
-#   case START_MODE
-#   when 'choose'
-#     answer = ''
-#     loop do
-#       prompt "Who should go first? (player or computer)?"
-#       answer = gets.chomp.downcase
-#       break if %w(player computer).include?(answer)
-#       prompt "Invalid choice."
-#     end
-#     answer
-#   when 'player'
-#     'player'
-#   else
-#     'computer'
-#   end
-# end
 
 def start_game
   if START_MODE == 'choose'
@@ -115,13 +95,13 @@ def start_game
     loop do
       prompt "Who should go first? (player or computer)?"
       answer = gets.chomp.downcase
-      break if %w(player computer).include?(answer)
+      break if ['player', 'computer'].include?(answer)
       prompt "Invalid choice."
     end
     answer
-  else 
+  else
     START_MODE
-  end  
+  end
 end
 
 def computer_places_piece!(brd)
@@ -141,16 +121,14 @@ def computer_places_piece!(brd)
   if !square
     if brd[5] == INITIAL_MARKER
       square = 5
-    else 
-      nil
     end
   end
 
-  if !square 
-    square = empty_squares(brd).sample 
+  if !square
+    square = empty_squares(brd).sample
   end
 
-  brd[square] = COMPUTER_MARKER 
+  brd[square] = COMPUTER_MARKER
 end
 
 def detect_winner(brd)
@@ -166,14 +144,14 @@ end
 
 def place_piece!(brd, player)
   if player == 'player'
-     player_places_piece!(brd)
+    player_places_piece!(brd)
   elsif player == 'computer'
     computer_places_piece!(brd)
   end
 end
 
 def alternate_player(player_now)
-   ["player", "computer"].select { |player| player != player_now }.first
+  ["player", "computer"].select { |player| player != player_now }.first
 end
 
 loop do
@@ -193,7 +171,6 @@ loop do
       sleep 1
       break if someone_won?(board) || board_full?(board)
     end
-    
 
     display_board(board)
     if someone_won?(board)
@@ -201,7 +178,6 @@ loop do
     else
       prompt "It's a tie!"
     end
-
 
     if detect_winner(board) == 'Player'
       player_score += 1
@@ -221,7 +197,6 @@ loop do
       end
       break
     end
- 
   end
 
   prompt "Play again? (y or n)"
