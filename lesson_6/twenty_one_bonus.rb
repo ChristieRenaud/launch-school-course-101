@@ -1,4 +1,3 @@
-require 'pry'
 def prompt(message)
   puts "=> #{message}"
 end
@@ -20,15 +19,14 @@ NEW_DECK = [['C', '2'], ['C', '3'], ['C', '4'],
             ['S', '8'], ['S', '9'], ['S', '10'],
             ['S', 'J'], ['S', 'Q'], ['S', 'K'], ['S', 'A']]
 
+def initialize_deck
+  NEW_DECK.shuffle
+end
+
 GOAL_NUMBER = 21
 
 def choose_card(hand, deck)
-  available_cards = deck.size - 1
-  num = rand(available_cards)
-  card = deck[num]
-  deck.delete_at(num)
-  hand << card
-  card
+  hand << deck.pop
 end
 
 def total(cards)
@@ -45,8 +43,8 @@ def total(cards)
     end
   end
 
-  values.select { |value| value == "A" }.count.times do  # count the number of aces and check sum
-    sum -= 10 if sum > GOAL_NUMBER                                # that many times, subtracting 10 if sum is over 21 each time
+  values.select { |value| value == "A" }.count.times do
+    sum -= 10 if sum > GOAL_NUMBER
   end
   sum
 end
@@ -80,7 +78,7 @@ def who_won(player_total, dealer_total)
   end
 end
 
-def increment_player_score(player_total, dealer_total, player_score)
+def increment_player(player_total, dealer_total, player_score)
   result = who_won(player_total, dealer_total)
   if [:dealer_busted, :player].include?(result)
     player_score + 1
@@ -89,7 +87,7 @@ def increment_player_score(player_total, dealer_total, player_score)
   end
 end
 
-def increment_dealer_score(player_total, dealer_total, dealer_score)
+def increment_dealer(player_total, dealer_total, dealer_score)
   result = who_won(player_total, dealer_total)
   if [:player_busted, :dealer].include?(result)
     dealer_score + 1
@@ -111,7 +109,6 @@ def match_won(dealer_score, player_score)
     "Dealer"
   elsif player_score == 5
     "Player"
-  else nil
   end
 end
 
@@ -132,7 +129,7 @@ def display_winner(player_total, dealer_total)
 end
 
 def end_of_round(player_hand, player_total, dealer_hand, dealer_total)
- puts '================='
+  puts '================='
   prompt "Player cards: #{player_hand}"
   prompt "Player total: #{player_total}"
   sleep 2
@@ -141,7 +138,7 @@ def end_of_round(player_hand, player_total, dealer_hand, dealer_total)
   prompt "Dealer total: #{dealer_total}"
   puts '================='
   sleep 2
- 
+
   display_winner(player_total, dealer_total)
   sleep 2
 end
@@ -157,10 +154,9 @@ loop do
   player_score = 0
   dealer_score = 0
 
-  loop do 
-
+  loop do
     break if match_won(dealer_score, player_score)
-    deck = NEW_DECK
+    deck = initialize_deck
     player_hand = []
     dealer_hand = []
     player_total = 0
@@ -203,8 +199,8 @@ loop do
 
     if busted?(player_total)
       end_of_round(player_hand, player_total, dealer_hand, dealer_total)
-      player_score = increment_player_score(player_total, dealer_total, player_score)
-      dealer_score = increment_dealer_score(player_total, dealer_total, dealer_score)
+      player_score = increment_player(player_total, dealer_total, player_score)
+      dealer_score = increment_dealer(player_total, dealer_total, dealer_score)
       display_score(player_score, dealer_score)
       next
     else
@@ -227,8 +223,8 @@ loop do
 
     if busted?(dealer_total)
       end_of_round(player_hand, player_total, dealer_hand, dealer_total)
-      player_score = increment_player_score(player_total, dealer_total, player_score)
-      dealer_score = increment_dealer_score(player_total, dealer_total, dealer_score)
+      player_score = increment_player(player_total, dealer_total, player_score)
+      dealer_score = increment_dealer(player_total, dealer_total, dealer_score)
       display_score(player_score, dealer_score)
       next
     else
@@ -236,14 +232,13 @@ loop do
     end
 
     end_of_round(player_hand, player_total, dealer_hand, dealer_total)
-    player_score = increment_player_score(player_total, dealer_total, player_score)
-    dealer_score = increment_dealer_score(player_total, dealer_total, dealer_score)
+    player_score = increment_player(player_total, dealer_total, player_score)
+    dealer_score = increment_dealer(player_total, dealer_total, dealer_score)
     display_score(player_score, dealer_score)
-
   end
   prompt "Match Over! #{match_won(dealer_score, player_score)} won!"
   display_score(player_score, dealer_score)
-  break unless play_again?  
+  break unless play_again?
 end
 
 prompt "Thank you for playing #{GOAL_NUMBER}. Good_bye!"

@@ -1,3 +1,4 @@
+require 'pry'
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
@@ -11,24 +12,15 @@ def prompt(msg)
   puts "=>#{msg}"
 end
 
-def joinor(array, punctuation=',', word ='or')
-  joined_string = ''
-  if array.size == 2
-    return joined_string = array.first.to_s + ' ' + word + ' ' + array.last.to_s
+def joinor(arr, punctuation=', ', word ='or')
+  case arr.size
+  when 0 then ''
+  when 1 then arr.first
+  when 2 then arr.join(" #{word} ")
+  else
+    arr[-1] = "#{word} #{arr.last}"
+    arr.join(punctuation)
   end
-  loop do
-    break if array.empty?
-    num = array.shift
-    case array.size
-    when 0
-      joined_string += num.to_s
-    when 1
-      joined_string += (num.to_s + punctuation + ' ' + word + ' ')
-    else
-      joined_string += (num.to_s + punctuation + ' ')
-    end
-  end
-  joined_string
 end
 
 # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -84,12 +76,10 @@ end
 def find_at_risk_square(line, board, player)
   if board.values_at(*line).count(player) == 2
     board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
-  else
-    nil
   end
 end
 
-def start_game
+def who_goes_first
   if START_MODE == 'choose'
     answer = ''
     loop do
@@ -104,26 +94,34 @@ def start_game
   end
 end
 
+def mark_critical_square(square, brd, space)
+  WINNING_LINES.each do |line|
+    square = find_at_risk_square(line, brd, space)
+    break if square
+  end
+end
+
 def computer_places_piece!(brd)
   square = nil
+  # mark_critical_square(square, brd, COMPUTER_MARKER)
+
   WINNING_LINES.each do |line|
     square = find_at_risk_square(line, brd, COMPUTER_MARKER)
     break if square
   end
 
   if !square
+  # mark_critical_square(square, brd, PLAYER_MARKER)
+    # binding.pry
     WINNING_LINES.each do |line|
       square = find_at_risk_square(line, brd, PLAYER_MARKER)
       break if square
     end
   end
 
-  if !square
-    if brd[5] == INITIAL_MARKER
-      square = 5
-    end
+  if !square && brd[5] == INITIAL_MARKER
+    square = 5
   end
-
   if !square
     square = empty_squares(brd).sample
   end
@@ -133,9 +131,9 @@ end
 
 def detect_winner(brd)
   WINNING_LINES.each do |line|
-    if brd.values_at(line[0], line[1], line[2]).count(PLAYER_MARKER) == 3
+    if brd.values_at(*line).count(PLAYER_MARKER) == 3
       return 'Player'
-    elsif brd.values_at(line[0], line[1], line[2]).count(COMPUTER_MARKER) == 3
+    elsif brd.values_at(*line).count(COMPUTER_MARKER) == 3
       return 'Computer'
     end
   end
@@ -158,8 +156,7 @@ loop do
   board = initialize_board
   player_score = 0
   computer_score = 0
-  starting_player = start_game
-
+  starting_player = who_goes_first
   loop do
     board = initialize_board
     current_player = starting_player
@@ -185,8 +182,9 @@ loop do
     if detect_winner(board) == 'Computer'
       computer_score += 1
     end
-
     sleep 1
+    prompt "The score is: Player #{player_score}, Computer #{computer_score}."
+    sleep 2
 
     if player_score == 5 || computer_score == 5
       prompt "Game Over"
@@ -199,8 +197,13 @@ loop do
     end
   end
 
-  prompt "Play again? (y or n)"
-  answer = gets.chomp
+  answer = ''
+  loop do
+    prompt "Play again? (y or n)"
+    answer = gets.chomp
+    break if ["y", "n"].include?(answer)
+    prompt "Invalid response."
+  end
   break unless answer.downcase.start_with?('y')
 end
 
