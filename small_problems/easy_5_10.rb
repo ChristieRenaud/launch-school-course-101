@@ -6,6 +6,7 @@ end
 def inner_line(box_length)
   puts "|" + (" " * box_length) + "|"
 end
+
 MAX_BOX_LENGTH = 80
 def print_in_box(string)
   box_length = string.size + 2

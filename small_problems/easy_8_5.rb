@@ -38,8 +38,8 @@ def substrings(string)
 end
 
 def palindromes(string)
-  all_substrings = substrings(string).select { |element| element.delete("^A-Za-z").size >= 2 }
-  all_substrings.select do |element| 
+  test_substrings = substrings(string).select { |element| element.delete("^A-Za-z").size >= 2 }
+  test_substrings.select do |element| 
     element.delete("^A-Za-z").casecmp(element.delete("^A-Za-z").reverse) == 0 
   end
 end

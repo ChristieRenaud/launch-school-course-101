@@ -1,18 +1,19 @@
-# def leap_year?(year)
-#   case 
-#   when year <= 1752
-#     year % 4 == 0
-#   when year > 1752
-#     if year % 400 == 0
-#       true
-#     elsif year % 100 == 0
-#       false
-#     else
-#       year % 4 == 0
-#     end
-#   end
-# end
+def leap_year?(year)
+  case 
+  when year <= 1752
+    year % 4 == 0
+  when year > 1752
+    if year % 400 == 0
+      true
+    elsif year % 100 == 0
+      false
+    else
+      year % 4 == 0
+    end
+  end
+end
 
+# alternate solution
 
 def leap_year?(year)
   if year > 1752

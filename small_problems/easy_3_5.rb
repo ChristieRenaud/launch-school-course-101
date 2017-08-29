@@ -5,6 +5,7 @@ def multiply(x, y)
 end
 
 def square(num, power)
+  return  if power == 0
   return num if power == 1
   x = multiply(num, num)
   counter = (power - 1)
@@ -18,5 +19,5 @@ end
 
 puts square(10, 3)
 puts square(-5, 5)
-puts square(4, 2)
+puts square(4, 0)
 puts square(10, 1)
