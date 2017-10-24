@@ -1,16 +1,17 @@
 GOAL_NUMBER = 21
+WIN_GAME = 5
 SUITS = ['C', 'D', 'H', 'S']
 FACES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-
-def initialize_deck
-  SUITS.product(FACES).shuffle
-end
 
 def prompt(message)
   puts "=> #{message}"
 end
 
-def choose_card(hand, deck)
+def initialize_deck
+  SUITS.product(FACES).shuffle
+end
+
+def deal_card(hand, deck)
   hand << deck.pop
 end
 
@@ -63,36 +64,27 @@ def who_won(player_total, dealer_total)
   end
 end
 
-def increment_player(player_total, dealer_total, player_score)
+def increment_score(scores, player_total, dealer_total)
   result = who_won(player_total, dealer_total)
   if [:dealer_busted, :player].include?(result)
-    player_score + 1
-  else
-    player_score
+    scores[:player] += 1
+  elsif [:player_busted, :dealer].include?(result)
+    scores[:dealer] +=1
   end
 end
 
-def increment_dealer(player_total, dealer_total, dealer_score)
-  result = who_won(player_total, dealer_total)
-  if [:player_busted, :dealer].include?(result)
-    dealer_score + 1
-  else
-    dealer_score
-  end
-end
-
-def display_score(player_score, dealer_score)
+def display_score(scores)
   prompt "The score is:"
-  prompt "Player: #{player_score}"
-  prompt "Dealer: #{dealer_score}"
+  prompt "Player: #{scores[:player]}"
+  prompt "Dealer: #{scores[:dealer]}"
   sleep 2
   system 'clear'
 end
 
-def match_won(dealer_score, player_score)
-  if dealer_score == 5
+def match_won(scores)
+  if scores[:dealer] == WIN_GAME
     "Dealer"
-  elsif player_score == 5
+  elsif scores[:player] == WIN_GAME
     "Player"
   end
 end
@@ -113,7 +105,7 @@ def display_winner(player_total, dealer_total)
   end
 end
 
-def end_of_round(player_hand, player_total, dealer_hand, dealer_total)
+def end_of_round(player_hand, dealer_hand, player_total, dealer_total)
   puts '================='
   prompt "Player cards: #{player_hand}"
   prompt "Player total: #{player_total}"
@@ -136,11 +128,10 @@ loop do
   prompt "The first player to win 5 rounds wins the match."
   puts '=================='
   sleep 1.5
-  player_score = 0
-  dealer_score = 0
+  scores = { player: 0, dealer: 0 }
 
   loop do
-    break if match_won(dealer_score, player_score)
+    break if match_won(scores)
     deck = initialize_deck
     player_hand = []
     dealer_hand = []
@@ -149,8 +140,8 @@ loop do
 
     # deal cards
     2.times do
-      choose_card(player_hand, deck)
-      choose_card(dealer_hand, deck)
+      deal_card(player_hand, deck)
+      deal_card(dealer_hand, deck)
     end
     prompt "Your hand is #{player_hand}"
     prompt "Dealer's hand is #{dealer_hand[0]} and a hidden card"
@@ -169,9 +160,9 @@ loop do
       end
 
       if player_turn == "h"
-        player_new_card = choose_card(player_hand, deck)
+        deal_card(player_hand, deck)
         player_total = total(player_hand)
-        prompt "Your card is a #{player_new_card}"
+        prompt "Your card is a #{player_hand.last}"
         sleep 1
         break if busted?(player_total)
         prompt "Your current hand is #{player_hand}"
@@ -184,10 +175,9 @@ loop do
     end
 
     if busted?(player_total)
-      end_of_round(player_hand, player_total, dealer_hand, dealer_total)
-      player_score = increment_player(player_total, dealer_total, player_score)
-      dealer_score = increment_dealer(player_total, dealer_total, dealer_score)
-      display_score(player_score, dealer_score)
+      end_of_round(player_hand, dealer_hand, player_total, dealer_total)
+      increment_score(scores, player_total, dealer_total)
+      display_score(scores)
       next
     else
       prompt "You chose to stay at #{player_total}"
@@ -199,31 +189,28 @@ loop do
     dealer_total = total(dealer_hand)
     loop do
       break if dealer_total >= (GOAL_NUMBER - 4) || busted?(dealer_total)
-      dealer_new_card = choose_card(dealer_hand, deck)
+      deal_card(dealer_hand, deck)
       prompt "dealer hits"
       sleep 1
-      prompt "Dealer's card is a #{dealer_new_card}"
+      prompt "Dealer's card is a #{dealer_hand.last}"
       sleep 2
       dealer_total = total(dealer_hand)
     end
 
     if busted?(dealer_total)
-      end_of_round(player_hand, player_total, dealer_hand, dealer_total)
-      player_score = increment_player(player_total, dealer_total, player_score)
-      dealer_score = increment_dealer(player_total, dealer_total, dealer_score)
-      display_score(player_score, dealer_score)
+      end_of_round(player_hand, dealer_hand, player_total, dealer_total)
+      increment_score(scores, player_total, dealer_total)
+      display_score(scores)
       next
     else
       prompt "Dealer chose to stay"
     end
 
-    end_of_round(player_hand, player_total, dealer_hand, dealer_total)
-    player_score = increment_player(player_total, dealer_total, player_score)
-    dealer_score = increment_dealer(player_total, dealer_total, dealer_score)
-    display_score(player_score, dealer_score)
+    end_of_round(player_hand, dealer_hand, player_total, dealer_total)
+    increment_score(scores, player_total, dealer_total)
+    display_score(scores)
   end
-  prompt "Match Over! #{match_won(dealer_score, player_score)} won!"
-  display_score(player_score, dealer_score)
+  prompt "Match Over! #{match_won(scores)} won!"
   break unless play_again?
 end
 
